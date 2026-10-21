@@ -1,6 +1,6 @@
 name: Weekly Beach UV Outlook
 
-on:
+'on':
 workflow_dispatch:
 schedule:
 - cron: "30 20 * * 0"
