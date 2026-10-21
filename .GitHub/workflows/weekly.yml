@@ -1,0 +1,33 @@
+name: Weekly Beach UV Outlook
+
+on:
+workflow_dispatch:
+schedule:
+- cron: "30 20 * * 0"
+
+permissions:
+contents: write
+
+jobs:
+build-forecast:
+runs-on: ubuntu-latest
+
+steps:
+- name: Get repository files
+uses: actions/checkout@v4
+
+- name: Set up Python
+uses: actions/setup-python@v5
+with:
+python-version: "3.12"
+
+- name: Fetch UV and weather forecast
+run: python main.py
+
+- name: Save forecast data
+run: |
+git config user.name "github-actions[bot]"
+git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+git add forecast.json
+git diff --cached --quiet || git commit -m "Update weekly UV forecast"
+git push
