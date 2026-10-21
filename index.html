@@ -2,300 +2,496 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#102b46">
-  <title>Weekly Beach UV Outlook</title>
-  <style>
-    body { margin: 0; font: 16px/1.5 -apple-system, sans-serif; background: #f2f6fa; color: #183047; }
-    header { background: #102b46; color: white; padding: 26px 20px; }
-    main { max-width: 900px; margin: auto; padding: 18px; }
-    .card { background: white; border-radius: 16px; padding: 18px; margin: 14px 0; box-shadow: 0 2px 10px #18304712; }
-    h1 { font-size: 25px; margin: 0 0 6px; }
-    h2 { font-size: 19px; margin-top: 0; }
-    h3 { font-size: 16px; margin-bottom: 4px; }
-    .muted { color: #647789; font-size: 13px; }
-    header .muted { color: #c8d8e8; }
-    .pill { display: inline-block; border-radius: 20px; padding: 4px 10px; background: #e4eef8; font-size: 13px; }
-    .days { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
-    .day { border: 1px solid #e1e9f0; border-radius: 12px; padding: 12px; }
-    .bar { height: 9px; border-radius: 8px; background: #e7edf3; overflow: hidden; margin: 9px 0; }
-    .fill { height: 100%; border-radius: 8px; }
-    .hour { display: grid; grid-template-columns: 75px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1px solid #e8eef3; }
-    .hour:last-child { border-bottom: 0; }
-    select { width: 100%; padding: 11px; border-radius: 9px; border: 1px solid #b9c9d8; background: white; color: #183047; font: inherit; }
-    a { color: #145ea8; }
-    @media(min-width:600px) { .days { grid-template-columns: repeat(4,minmax(0,1fr)); } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102b46">
+<title>Beach UV Outlook</title>
+<style>
+:root {
+  --navy:#102b46; --blue:#246b91; --sky:#eaf5fb;
+  --ink:#19334a; --muted:#6a7d8e; --line:#e0e9f0;
+  --bg:#f3f7fa; --white:#fff; --green:#25845a;
+  --yellow:#e4a22b; --orange:#e77936; --red:#d64d56;
+  --purple:#8755a6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:linear-gradient(125deg,#102b46,#1d597a);
+  color:white;padding:27px 20px 31px}
+.head-inner,main{max-width:1050px;margin:auto}
+.brand{font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  color:#b8dcec;font-weight:800}
+h1{font-size:clamp(27px,5vw,39px);line-height:1.12;margin:9px 0}
+header p{margin:8px 0;color:#d6e8f2}
+main{padding:18px 15px 45px}
+.card{background:white;border:1px solid var(--line);border-radius:18px;
+  padding:19px;margin:14px 0;box-shadow:0 4px 18px #19334a08;min-width:0}
+h2{font-size:19px;line-height:1.3;margin:0 0 7px}
+h3{font-size:15px;margin:0 0 5px}
+p{margin:7px 0}
+.muted{font-size:12px;color:var(--muted)}
+.eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;
+  letter-spacing:1.1px;color:var(--muted)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+select,button{font:inherit;border-radius:10px;padding:11px 13px}
+select{background:white;border:1px solid #cbd9e4;color:var(--ink);max-width:100%}
+button{border:1px solid var(--line);background:white;color:var(--ink);cursor:pointer}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #64b8e3;outline-offset:3px}
+button.active{background:var(--navy);color:white;border-color:var(--navy)}
+button:disabled{opacity:.4;cursor:not-allowed}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.stat{padding:15px;border-radius:14px;background:#f2f7fa}
+.stat .value{font-size:29px;line-height:1.3;font-weight:800;letter-spacing:-1px}
+.stat .label{font-size:12px;color:var(--muted)}
+.pill{display:inline-block;padding:4px 9px;border-radius:99px;
+  font-size:12px;font-weight:750;background:#e8eef3;color:#41596b}
+.uv-low{background:#dff4e8;color:#176c45}
+.uv-moderate{background:#fff0c8;color:#815500}
+.uv-high{background:#ffe1cc;color:#93410f}
+.uv-very{background:#ffdcdf;color:#a32b37}
+.uv-extreme{background:#eee0fa;color:#67378b}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+.day-card{border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+.day-card.best{border:2px solid #e4a22b;background:#fffdf7}
+.day-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.big-uv{font-size:27px;font-weight:850;letter-spacing:-1px;line-height:1.2}
+.chart-wrap{width:100%;overflow:hidden;margin-top:9px}
+svg.chart{width:100%;height:auto;display:block;overflow:visible}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.ranking{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
+.rank-card{border:1px solid var(--line);border-radius:15px;padding:16px;min-width:0}
+.rank-num{display:inline-grid;place-items:center;width:32px;height:32px;
+  border-radius:10px;background:var(--navy);color:white;font-weight:800}
+.rank-head{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.rank-uv{font-size:32px;font-weight:850;letter-spacing:-1px}
+.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.info{background:#f3f7fa;border-radius:10px;padding:10px}
+.info b{display:block;font-size:15px}
+.info span{font-size:11px;color:var(--muted)}
+.notice{border-radius:12px;padding:12px 14px;background:#fff5df;
+  color:#6c4b10;font-size:13px}
+.good{background:#e8f6ee;color:#205d3e}
+.hour-list{display:grid;gap:8px;margin-top:13px}
+.hour-row{display:grid;grid-template-columns:68px 1fr 40px;align-items:center;gap:9px}
+.hour-time{font-size:12px;font-weight:700}
+.hour-track{height:12px;border-radius:99px;background:#edf1f4;overflow:hidden}
+.hour-fill{height:100%;border-radius:99px}
+.hour-num{text-align:right;font-weight:800;font-size:13px}
+.day-nav{display:flex;gap:7px;overflow-x:auto;padding:2px 0 8px}
+.day-nav button{white-space:nowrap;font-size:12px;padding:9px 11px}
+footer{padding:8px 4px 25px;color:var(--muted);font-size:12px}
+a{color:#145e91}
+hr{border:0;border-top:1px solid var(--line);margin:16px 0}
+@media(min-width:620px){
+  main{padding:24px 22px 50px}
+  .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ranking{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .card{padding:23px;margin:17px 0}
+}
+@media(min-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
 </head>
 <body>
 <header>
-  <h1>Weekly Beach UV Outlook</h1>
-  <div>Isle of Palms · Sullivan's Island · Mount Pleasant, SC</div>
-  <p class="muted">Seven-day UV and weather forecast</p>
+  <div class="head-inner">
+    <div class="brand">Coastal forecast · South Carolina</div>
+    <h1>Beach UV Outlook</h1>
+    <p>Know the UV peak. See the whole day. Plan with better information.</p>
+    <p class="muted" id="header-date">Seven-day UV and weather forecast</p>
+  </div>
 </header>
 
 <main>
   <section class="card">
-    <h2>Forecast status</h2>
-    <p id="status">Loading forecast data…</p>
+    <div class="row">
+      <div>
+        <div class="eyebrow">Your forecast</div>
+        <h2 id="location-heading">Isle of Palms</h2>
+        <p class="muted">Select a location to update every chart and ranking.</p>
+      </div>
+      <select id="location" aria-label="Choose forecast location">
+        <option>Isle of Palms</option>
+        <option>Sullivan's Island</option>
+        <option>Mount Pleasant</option>
+      </select>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="label">Highest daily UV</div><div class="value" id="stat-peak">—</div><div class="muted" id="stat-peak-day">Loading forecast</div></div>
+      <div class="stat"><div class="label">Peak hour</div><div class="value" id="stat-hour">—</div><div class="muted">Local time</div></div>
+      <div class="stat"><div class="label">Average cloud cover at peak</div><div class="value" id="stat-clouds">—</div><div class="muted">Peak hour</div></div>
+      <div class="stat"><div class="label">Forecast days available</div><div class="value" id="stat-days">—</div><div class="muted">With daily UV data</div></div>
+    </div>
+    <hr>
+    <p id="status" role="status" aria-live="polite">Loading forecast.json…</p>
     <p class="muted" id="updated"></p>
-    <p class="muted">Forecasts are estimates and can change. This page reads forecast.json generated by the automated workflow.</p>
   </section>
 
   <section class="card">
-    <h2>Choose a location</h2>
-    <label for="location">Forecast location</label>
-    <select id="location">
-      <option>Isle of Palms</option>
-      <option>Sullivan's Island</option>
-      <option>Mount Pleasant</option>
-    </select>
+    <div class="row">
+      <div><div class="eyebrow">At a glance</div><h2>Daily UV curves</h2></div>
+      <span class="pill">Hourly forecast</span>
+    </div>
+    <p class="muted">Each chart shows how UV changes through the day. The dot marks the day's highest available hourly UV reading. Daily maximum UV is shown separately.</p>
+    <div id="daily-charts" class="grid"></div>
   </section>
 
   <section class="card">
-    <h2>Daily UV overview</h2>
-    <div id="days" class="days"></div>
-    <p class="muted">Daily values are forecast maximum UV Index values, not an all-day average.</p>
+    <div class="eyebrow">Automatic ranking</div>
+    <h2>The 3 highest-UV days</h2>
+    <p class="muted">Ranked by the forecast's daily maximum UV Index for your selected location. Peak times come from the hourly series.</p>
+    <div id="top-days" class="ranking"></div>
   </section>
 
   <section class="card">
-    <h2>Best lower-UV window</h2>
-    <div id="window">Waiting for forecast…</div>
-    <p class="muted">This identifies a relatively lower-UV period in the daytime forecast, not a guarantee of safe sun exposure. Early and late hours may have lower UV but may not suit every beach activity.</p>
+    <div class="eyebrow">Explore the details</div>
+    <h2>Hourly forecast by day</h2>
+    <p class="muted">Choose any day to inspect UV, temperature, clouds, and precipitation probability hour by hour.</p>
+    <div id="day-nav" class="day-nav" aria-label="Choose forecast day"></div>
+    <div id="selected-summary"></div>
+    <div id="hourly-list" class="hour-list"></div>
   </section>
 
   <section class="card">
-    <h2>Hourly forecast</h2>
-    <label for="day">Choose a day</label>
-    <select id="day"></select>
-    <div id="hours"></div>
+    <h2>Understanding peak UV</h2>
+    <p>UV Index describes the strength of sunburn-producing ultraviolet radiation at the surface. A higher number means a greater potential for skin damage.</p>
+    <div class="row" style="justify-content:flex-start;gap:7px;margin:12px 0;flex-wrap:wrap">
+      <span class="pill uv-low">0–2 Low</span>
+      <span class="pill uv-moderate">3–5 Moderate</span>
+      <span class="pill uv-high">6–7 High</span>
+      <span class="pill uv-very">8–10 Very high</span>
+      <span class="pill uv-extreme">11+ Extreme</span>
+    </div>
+    <div class="notice">Peak UV hours are the periods of strongest UV exposure, not safe tanning windows. There is no risk-free UV tan; UV exposure can damage skin even without a burn. For a tan without UV exposure, use sunless tanning products.</div>
+    <p>When UV is 3 or higher, use shade, protective clothing, sunglasses, and broad-spectrum SPF 30+ sunscreen. Clouds do not eliminate UV.</p>
   </section>
 
   <section class="card">
-    <h2>How to read the UV Index</h2>
-    <p>0–2: Low · 3–5: Moderate · 6–7: High · 8–10: Very high · 11+: Extreme</p>
-    <p>When UV is 3 or higher, use shade, protective clothing, sunglasses, and broad-spectrum SPF 30+ sunscreen. Clouds do not eliminate UV exposure.</p>
+    <h2>Sources and data quality</h2>
+    <p>Forecast provider: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>. The forecast is model guidance, not a guarantee of actual beach conditions.</p>
+    <p>UV guidance: <a href="https://www.epa.gov/sunsafety/uv-index-1" target="_blank" rel="noopener">U.S. EPA UV Index</a>.</p>
+    <p id="quality" class="muted">Checking data completeness…</p>
+    <p class="muted">Cloud cover is not a direct measurement of UV. The hourly UV forecast is used for UV charts and peak times; the daily maximum is used to rank days. Missing values are not treated as zero.</p>
   </section>
 
-  <section class="card">
-    <h2>Sources and limitations</h2>
-    <ul>
-      <li><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo forecast API</a> — hourly and daily forecast data</li>
-      <li><a href="https://www.epa.gov/sunsafety/uv-index-1" target="_blank" rel="noopener">U.S. EPA UV Index information</a> — UV guidance</li>
-      <li><a href="https://forecast.weather.gov/" target="_blank" rel="noopener">National Weather Service</a> — additional local weather information</li>
-    </ul>
-    <p class="muted">Forecast confidence is not independently calculated here. This page displays available model data and flags missing values rather than treating them as zero.</p>
-    <p class="muted">The forecast is for the listed coordinates; conditions can vary along the beach.</p>
-  </section>
+  <footer>
+    <div>Beach UV Outlook · Isle of Palms, Sullivan's Island & Mount Pleasant, SC</div>
+    <div>Forecast times use the location's America/New_York time zone.</div>
+  </footer>
 </main>
 
 <script>
+"use strict";
+
 const $ = id => document.getElementById(id);
 let forecast = null;
+let selectedDate = null;
 
-function uvLabel(uv) {
-  if (uv === null || !Number.isFinite(uv)) return "Unavailable";
-  if (uv <= 2) return "Low";
-  if (uv <= 5) return "Moderate";
-  if (uv <= 7) return "High";
-  if (uv <= 10) return "Very high";
-  return "Extreme";
-}
+const LOCATIONS = ["Isle of Palms", "Sullivan's Island", "Mount Pleasant"];
 
-function uvColor(uv) {
-  if (uv <= 2) return "#3b9c68";
-  if (uv <= 5) return "#e4a22b";
-  if (uv <= 7) return "#e87535";
-  if (uv <= 10) return "#d64b54";
-  return "#8556a8";
-}
-
-function numberOrNull(value) {
+function num(value) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
-
-function formatTime(value) {
-  if (!value) return "Unavailable";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? value
-    : date.toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
+function fmtUV(value) {
+  return value === null ? "—" : value.toFixed(1);
 }
-
-function formatDay(value) {
-  const date = new Date(value + (value.length === 10 ? "T12:00:00" : ""));
-  return Number.isNaN(date.getTime())
-    ? value
-    : date.toLocaleDateString([], {weekday: "long", month: "short", day: "numeric"});
+function uvName(value) {
+  if (value === null) return "Missing UV";
+  if (value < 3) return "Low";
+  if (value < 6) return "Moderate";
+  if (value < 8) return "High";
+  if (value < 11) return "Very high";
+  return "Extreme";
 }
-
-function weatherDescription(code) {
+function uvClass(value) {
+  if (value === null) return "";
+  if (value < 3) return "uv-low";
+  if (value < 6) return "uv-moderate";
+  if (value < 8) return "uv-high";
+  if (value < 11) return "uv-very";
+  return "uv-extreme";
+}
+function uvColor(value) {
+  if (value === null) return "#b9c9d8";
+  if (value < 3) return "#25845a";
+  if (value < 6) return "#e4a22b";
+  if (value < 8) return "#e77936";
+  if (value < 11) return "#d64d56";
+  return "#8755a6";
+}
+function dateLabel(date) {
+  if (!date) return "Date unavailable";
+  const d = new Date(date + "T12:00:00");
+  return Number.isNaN(d.getTime()) ? date :
+    d.toLocaleDateString("en-US", {weekday:"short",month:"short",day:"numeric"});
+}
+function timeLabel(time) {
+  if (!time) return "—";
+  const match = time.match(/T(\d{2}):(\d{2})/);
+  if (!match) return time;
+  let hour = Number(match[1]);
+  const minute = match[2];
+  const suffix = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
+  return hour + (minute === "00" ? "" : ":" + minute) + " " + suffix;
+}
+function fullTimeLabel(time) {
+  return time ? dateLabel(time.slice(0,10)) + " · " + timeLabel(time) : "—";
+}
+function weatherText(code) {
   if (code == null) return "Conditions unavailable";
   if (code === 0) return "Clear";
-  if ([1, 2].includes(code)) return "Mostly clear / partly cloudy";
+  if ([1,2].includes(code)) return "Mostly clear / partly cloudy";
   if (code === 3) return "Overcast";
-  if ([45, 48].includes(code)) return "Fog";
-  if ([51, 53, 55, 56, 57].includes(code)) return "Drizzle";
-  if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return "Rain / showers";
-  if ([71, 73, 75, 77, 85, 86].includes(code)) return "Snow";
-  if ([95, 96, 99].includes(code)) return "Thunderstorms";
+  if ([45,48].includes(code)) return "Fog";
+  if ([51,53,55,56,57].includes(code)) return "Drizzle";
+  if ([61,63,65,66,67,80,81,82].includes(code)) return "Rain / showers";
+  if ([71,73,75,77,85,86].includes(code)) return "Snow / snow showers";
+  if ([95,96,99].includes(code)) return "Thunderstorms";
   return "Weather code " + code;
 }
-
-function render() {
-  if (!forecast) return;
-  const name = $("location").value;
-  const data = forecast.locations && forecast.locations[name];
-
-  if (!data) {
-    $("status").textContent = "Forecast data for this location is missing.";
-    $("days").innerHTML = "";
-    $("hours").textContent = "";
-    $("window").textContent = "Unable to calculate a window without data.";
-    return;
-  }
-
-  const daily = data.daily || {};
-  const hourly = data.hourly || {};
+function valueText(value, suffix = "") {
+  return value === null || value === undefined ? "Unavailable" : value + suffix;
+}
+function dataForLocation() {
+  return forecast && forecast.locations ? forecast.locations[$("location").value] : null;
+}
+function dailyRecords(data) {
+  const daily = data && data.daily ? data.daily : {};
+  const hourly = data && data.hourly ? data.hourly : {};
   const dates = daily.time || [];
-
-  $("status").textContent = "Forecast loaded for " + name + ".";
-  $("updated").textContent =
-    "Data generated: " + (forecast.generated_at || "timestamp unavailable") +
-    " · Source: " + (forecast.source || "source unavailable");
-
-  $("days").innerHTML = dates.map((date, i) => {
-    const uv = numberOrNull(daily.uv_index_max?.[i]);
-    const sunrise = daily.sunrise?.[i];
-    const sunset = daily.sunset?.[i];
-    const uvText = uv === null ? "Unavailable" : uv.toFixed(1);
-    const width = uv === null ? 0 : Math.min(100, Math.max(0, uv / 11 * 100));
-    const color = uv === null ? "#b9c9d8" : uvColor(uv);
-
-    return `<div class="day">
-      <strong>${formatDay(date)}</strong>
-      <h3>UV ${uvText}</h3>
-      <span class="pill">${uv === null ? "Missing data" : uvLabel(uv)}</span>
-      <div class="bar"><div class="fill" style="width:${width}%;background:${color}"></div></div>
-      <div class="muted">Sunrise: ${formatTime(sunrise)}</div>
-      <div class="muted">Sunset: ${formatTime(sunset)}</div>
-    </div>`;
-  }).join("") || "<p>Daily forecast data is unavailable.</p>";
-
-  const previousDay = $("day").value;
-  $("day").innerHTML = dates.map(date =>
-    `<option value="${date}">${formatDay(date)}</option>`
-  ).join("");
-
-  if (dates.includes(previousDay)) $("day").value = previousDay;
-  renderHours();
-  renderWindow();
-}
-
-function renderHours() {
-  if (!forecast) return;
-  const data = forecast.locations[$("location").value];
-  const hourly = data?.hourly || {};
-  const times = hourly.time || [];
-  const selected = $("day").value;
-
-  const indices = times.map((time, i) => ({time, i}))
-    .filter(item => item.time.startsWith(selected));
-
-  $("hours").innerHTML = indices.map(({time, i}) => {
-    const uv = numberOrNull(hourly.uv_index?.[i]);
-    const temp = numberOrNull(hourly.temperature_2m?.[i]);
-    const clouds = numberOrNull(hourly.cloud_cover?.[i]);
-    const rain = numberOrNull(hourly.precipitation_probability?.[i]);
-    const code = hourly.weather_code?.[i];
-
-    return `<div class="hour">
-      <strong>${formatTime(time)}</strong>
-      <div>
-        <strong>UV ${uv === null ? "Unavailable" : uv.toFixed(1)}</strong>
-        · ${uv === null ? "No UV data" : uvLabel(uv)}<br>
-        ${temp === null ? "Temperature unavailable" : Math.round(temp) + "°F"}
-        · ${clouds === null ? "Cloud cover unavailable" : Math.round(clouds) + "% clouds"}
-        · ${rain === null ? "Rain chance unavailable" : Math.round(rain) + "% rain chance"}<br>
-        <span class="muted">${weatherDescription(code)}</span>
-      </div>
-    </div>`;
-  }).join("") || "<p>No hourly forecast for this day.</p>";
-}
-
-function renderWindow() {
-  const data = forecast.locations[$("location").value];
-  const hourly = data?.hourly || {};
-  const times = hourly.time || [];
-  const uvValues = hourly.uv_index || [];
-  const dates = data?.daily?.time || [];
-
-  const candidates = [];
-
-  for (const date of dates) {
-    const daytime = times.map((time, i) => ({
+  const hourlyTimes = hourly.time || [];
+  return dates.map((date, i) => {
+    const dayHours = hourlyTimes.map((time, j) => ({
       time,
-      uv: numberOrNull(uvValues[i])
-    })).filter(item =>
-      item.time.startsWith(date) &&
-      Number(item.time.slice(11, 13)) >= 8 &&
-      Number(item.time.slice(11, 13)) <= 17 &&
-      item.uv !== null
-    );
+      uv: num(hourly.uv_index && hourly.uv_index[j]),
+      temp: num(hourly.temperature_2m && hourly.temperature_2m[j]),
+      clouds: num(hourly.cloud_cover && hourly.cloud_cover[j]),
+      rain: num(hourly.precipitation_probability && hourly.precipitation_probability[j]),
+      code: hourly.weather_code ? hourly.weather_code[j] : null
+    })).filter(hour => hour.time && hour.time.slice(0,10) === date);
 
-    for (let i = 0; i < daytime.length - 1; i++) {
-      const first = new Date(daytime[i].time).getTime();
-      const second = new Date(daytime[i + 1].time).getTime();
-      if (second - first !== 3600000) continue;
+    const available = dayHours.filter(hour => hour.uv !== null);
+    const hourlyPeak = available.length ?
+      available.reduce((best, hour) => hour.uv > best.uv ? hour : best) : null;
+    const dailyMax = num(daily.uv_index_max && daily.uv_index_max[i]);
 
-      candidates.push({
-        date,
-        start: daytime[i].time,
-        end: daytime[i + 1].time,
-        average: (daytime[i].uv + daytime[i + 1].uv) / 2
-      });
-    }
+    return {
+      date,
+      dailyMax,
+      sunrise: daily.sunrise && daily.sunrise[i],
+      sunset: daily.sunset && daily.sunset[i],
+      hours: dayHours,
+      hourlyPeak
+    };
+  });
+}
+function peakWindow(day) {
+  if (!day || !day.hours.length) return null;
+  const hours = day.hours.filter(h => h.uv !== null);
+  if (!hours.length) return null;
+  const peak = Math.max(...hours.map(h => h.uv));
+  const peakHours = hours.filter(h => h.uv === peak);
+  return {peak, start:peakHours[0], end:peakHours[peakHours.length-1]};
+}
+function svgChart(day, compact = false) {
+  const valid = day.hours.filter(h => h.uv !== null);
+  if (!valid.length) return '<p class="muted">Hourly UV data is unavailable for this day.</p>';
+
+  const W = 320, H = compact ? 112 : 145;
+  const pad = {l:28,r:9,t:14,b:25};
+  const plotW = W-pad.l-pad.r, plotH = H-pad.t-pad.b;
+  const maxValue = Math.max(3, Math.ceil(Math.max(...valid.map(h=>h.uv))/2)*2);
+  const x = hour => pad.l + (Number(hour.time.slice(11,13))/23)*plotW;
+  const y = uv => pad.t + plotH - (uv/maxValue)*plotH;
+  const points = valid.map(h => `${x(h).toFixed(1)},${y(h.uv).toFixed(1)}`).join(" ");
+  const peak = valid.reduce((best,h)=>h.uv>best.uv?h:best);
+  const peakX=x(peak), peakY=y(peak.uv);
+  let grid="";
+  for(let v=0;v<=maxValue;v+=Math.max(1,maxValue/3)){
+    const yy=y(v);
+    grid += `<line x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}" stroke="#e7edf2" stroke-width="1"/>`;
+    grid += `<text x="${pad.l-6}" y="${yy+3}" text-anchor="end" fill="#718596" font-size="9">${Math.round(v)}</text>`;
   }
-
-  candidates.sort((a, b) => a.average - b.average);
-
-  if (!candidates.length) {
-    $("window").textContent = "Not enough hourly UV data to suggest a window.";
+  let ticks="";
+  [6,9,12,15,18,21].forEach(hr=>{
+    ticks += `<text x="${pad.l+(hr/23)*plotW}" y="${H-7}" text-anchor="middle" fill="#718596" font-size="9">${hr%12||12}${hr<12?"a":"p"}</text>`;
+  });
+  return `<div class="chart-wrap">
+    <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Hourly UV curve for ${day.date}; peak ${peak.uv.toFixed(1)} at ${timeLabel(peak.time)}">
+      ${grid}
+      <polygon points="${pad.l},${pad.t+plotH} ${points} ${W-pad.r},${pad.t+plotH}" fill="#dceef7" opacity=".9"/>
+      <polyline points="${points}" fill="none" stroke="#246b91" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="${peakX}" cy="${peakY}" r="4.5" fill="${uvColor(peak.uv)}" stroke="white" stroke-width="1.5"/>
+      ${ticks}
+      <text x="${Math.min(W-70,Math.max(35,peakX))}" y="${Math.max(11,peakY-9)}" fill="#19334a" font-size="10" font-weight="700" text-anchor="middle">${peak.uv.toFixed(1)} peak</text>
+    </svg>
+  </div>`;
+}
+function renderHeader(data, days) {
+  $("location-heading").textContent = $("location").value;
+  const valid = days.filter(d=>d.dailyMax!==null);
+  const top = [...valid].sort((a,b)=>b.dailyMax-a.dailyMax);
+  const highest = top[0];
+  $("stat-peak").textContent = highest ? highest.dailyMax.toFixed(1) : "—";
+  $("stat-peak-day").textContent = highest ? dateLabel(highest.date) : "No daily UV data";
+  $("stat-hour").textContent = highest && highest.hourlyPeak ? timeLabel(highest.hourlyPeak.time) : "—";
+  $("stat-clouds").textContent = highest && highest.hourlyPeak && highest.hourlyPeak.clouds!==null ?
+    Math.round(highest.hourlyPeak.clouds)+"%" : "—";
+  $("stat-days").textContent = valid.length;
+  $("header-date").textContent = "Seven-day outlook · " + $("location").value;
+}
+function renderDaily(days) {
+  const root = $("daily-charts");
+  if (!days.length) {
+    root.innerHTML = '<p>No daily forecast is available for this location.</p>';
     return;
   }
-
-  const best = candidates[0];
-  $("window").innerHTML =
-    `<strong>${formatDay(best.date)}</strong><p>` +
-    `${formatTime(best.start)} – ${formatTime(best.end)}</p>` +
-    `<p>Average UV during these two forecast hours: ${best.average.toFixed(1)} ` +
-    `(${uvLabel(best.average)}).</p>` +
-    `<p class="muted">This is the lowest-average consecutive two-hour daytime period found in the available data, not a safety guarantee.</p>`;
+  root.innerHTML = days.map(day=>{
+    const uv=day.dailyMax;
+    const peak=day.hourlyPeak;
+    const isTop = uv!==null && [...days].filter(d=>d.dailyMax!==null).sort((a,b)=>b.dailyMax-a.dailyMax).slice(0,3).some(d=>d.date===day.date);
+    return `<article class="day-card ${isTop?'best':''}">
+      <div class="day-top">
+        <div><h3>${dateLabel(day.date)}</h3><div class="muted">${day.sunrise?'Sunrise '+timeLabel(day.sunrise):'Sunrise —'}</div></div>
+        <span class="pill ${uvClass(uv)}">${uvName(uv)}</span>
+      </div>
+      <div class="row" style="margin-top:12px;align-items:baseline">
+        <div class="big-uv">${uv===null?'—':uv.toFixed(1)} <span class="muted">UV max</span></div>
+        <span class="muted">${peak?'Peak '+timeLabel(peak.time):'Peak unavailable'}</span>
+      </div>
+      ${svgChart(day,true)}
+      <div class="muted">${day.sunset?'Sunset '+timeLabel(day.sunset):'Sunset unavailable'}</div>
+    </article>`;
+  }).join("");
 }
-
+function renderTop(days) {
+  const top=days.filter(d=>d.dailyMax!==null).sort((a,b)=>b.dailyMax-a.dailyMax).slice(0,3);
+  $("top-days").innerHTML=top.length ? top.map((day,index)=>{
+    const peak=day.hourlyPeak;
+    const window=peakWindow(day);
+    const temp=peak?peak.temp:null, clouds=peak?peak.clouds:null, rain=peak?peak.rain:null;
+    const description=peak?weatherText(peak.code):"Conditions unavailable";
+    return `<article class="rank-card">
+      <div class="rank-head"><span class="rank-num">${index+1}</span><div><h3>${dateLabel(day.date)}</h3><div class="muted">${index===0?'Highest forecast UV':index===1?'Second highest':'Third highest'}</div></div></div>
+      <div class="row" style="align-items:baseline">
+        <div class="rank-uv">${day.dailyMax.toFixed(1)}</div>
+        <span class="pill ${uvClass(day.dailyMax)}">${uvName(day.dailyMax)}</span>
+      </div>
+      <div class="muted">Daily maximum UV Index</div>
+      ${svgChart(day,true)}
+      <div class="info-grid">
+        <div class="info"><span>Hourly UV peak</span><b>${peak?peak.uv.toFixed(1):"—"}</b></div>
+        <div class="info"><span>Peak time</span><b>${peak?timeLabel(peak.time):"Unavailable"}</b></div>
+        <div class="info"><span>Temperature at peak</span><b>${temp===null?"—":Math.round(temp)+"°F"}</b></div>
+        <div class="info"><span>Cloud cover</span><b>${clouds===null?"—":Math.round(clouds)+"%"}</b></div>
+        <div class="info"><span>Rain probability</span><b>${rain===null?"—":Math.round(rain)+"%"}</b></div>
+        <div class="info"><span>Weather</span><b style="font-size:12px">${description}</b></div>
+      </div>
+      <hr>
+      <div class="eyebrow">Strongest UV exposure</div>
+      <p><strong>${window?timeLabel(window.start.time):"Unavailable"}</strong>${window && window.end.time!==window.start.time?' – '+timeLabel(window.end.time):''}</p>
+      <p class="muted">Peak reading ${peak?peak.uv.toFixed(1):"unavailable"}. This identifies the strongest forecast UV, not a safe tanning period.</p>
+    </article>`;
+  }).join("") : '<p>There are not enough daily UV readings to rank the top three days.</p>';
+}
+function renderDayNav(days) {
+  const nav=$("day-nav");
+  if(!days.length){nav.innerHTML="";return;}
+  if(!days.some(d=>d.date===selectedDate)) selectedDate=days[0].date;
+  nav.innerHTML=days.map(day=>`<button type="button" data-date="${day.date}" class="${day.date===selectedDate?'active':''}" aria-pressed="${day.date===selectedDate}">${dateLabel(day.date)}</button>`).join("");
+  nav.querySelectorAll("button").forEach(button=>button.addEventListener("click",()=>{
+    selectedDate=button.dataset.date;
+    renderDayNav(days);
+    renderSelectedDay(days);
+  }));
+}
+function renderSelectedDay(days) {
+  const day=days.find(d=>d.date===selectedDate);
+  if(!day){$("selected-summary").innerHTML="";$("hourly-list").innerHTML="";return;}
+  const peak=day.hourlyPeak;
+  $("selected-summary").innerHTML=`<div class="info-grid">
+    <div class="info"><span>Daily maximum UV</span><b>${fmtUV(day.dailyMax)}</b></div>
+    <div class="info"><span>Hourly peak</span><b>${peak?peak.uv.toFixed(1):"—"}</b></div>
+    <div class="info"><span>Sunrise</span><b>${day.sunrise?timeLabel(day.sunrise):"—"}</b></div>
+    <div class="info"><span>Sunset</span><b>${day.sunset?timeLabel(day.sunset):"—"}</b></div>
+  </div>`;
+  const hours=day.hours;
+  $("hourly-list").innerHTML=hours.length ? hours.map(h=>{
+    const width=h.uv===null?0:Math.min(100,h.uv/11*100);
+    return `<div class="hour-row">
+      <div class="hour-time">${timeLabel(h.time)}</div>
+      <div class="hour-track" aria-label="${h.uv===null?'UV unavailable':'UV '+h.uv.toFixed(1)}"><div class="hour-fill" style="width:${width}%;background:${uvColor(h.uv)}"></div></div>
+      <div class="hour-num">${h.uv===null?'—':h.uv.toFixed(1)}</div>
+    </div>
+    <div class="muted" style="padding-left:77px;margin-top:-5px;margin-bottom:4px">
+      ${h.temp===null?'Temp —':Math.round(h.temp)+'°F'} ·
+      ${h.clouds===null?'Clouds —':Math.round(h.clouds)+'% clouds'} ·
+      ${h.rain===null?'Rain —':Math.round(h.rain)+'% rain'} · ${weatherText(h.code)}
+    </div>`;
+  }).join("") : '<p>Hourly data is unavailable for this day.</p>';
+}
+function renderQuality(days) {
+  const hourlyMissing=days.reduce((n,d)=>n+d.hours.filter(h=>h.uv===null).length,0);
+  const dailyMissing=days.filter(d=>d.dailyMax===null).length;
+  const generated=forecast.generated_at;
+  $("updated").textContent="Forecast generated: "+(generated||"timestamp not provided")+
+    " · Provider: "+(forecast.source||"Open-Meteo");
+  const warnings=[];
+  if(!generated) warnings.push("No generation timestamp provided.");
+  if(dailyMissing) warnings.push(dailyMissing+" day(s) have missing daily maximum UV.");
+  if(hourlyMissing) warnings.push(hourlyMissing+" hourly UV value(s) are missing.");
+  if(days.length<7) warnings.push("Fewer than seven forecast days are available.");
+  $("quality").textContent=warnings.length ? "Data checks: "+warnings.join(" ") :
+    "Data checks: daily and hourly UV values are present for the available forecast days. This is not an independent measure of forecast accuracy.";
+  $("status").textContent=warnings.length ?
+    "Forecast loaded, with some data gaps to review." :
+    "Forecast loaded successfully. Values below come from the forecast file.";
+  $("status").className=warnings.length?"notice":"notice good";
+}
+function render() {
+  const data=dataForLocation();
+  if(!data) {
+    $("status").textContent="Forecast data for this location is missing.";
+    $("daily-charts").innerHTML="";
+    $("top-days").innerHTML="";
+    $("day-nav").innerHTML="";
+    $("hourly-list").innerHTML="";
+    $("quality").textContent="Could not find the selected location in forecast.json.";
+    return;
+  }
+  const days=dailyRecords(data);
+  renderHeader(data,days);
+  renderDaily(days);
+  renderTop(days);
+  renderDayNav(days);
+  renderSelectedDay(days);
+  renderQuality(days);
+}
 async function loadForecast() {
   try {
-    const response = await fetch("forecast.json?v=" + Date.now(), {cache: "no-store"});
-    if (!response.ok) throw new Error("HTTP " + response.status);
-    forecast = await response.json();
-
-    if (!forecast.locations) throw new Error("The forecast file has no locations.");
-
-    $("status").textContent = "Forecast data loaded successfully.";
+    const response=await fetch("forecast.json?v="+Date.now(),{cache:"no-store"});
+    if(!response.ok) throw new Error("HTTP "+response.status);
+    forecast=await response.json();
+    if(!forecast.locations) throw new Error("Expected a locations object in forecast.json.");
+    const missing=LOCATIONS.filter(name=>!forecast.locations[name]);
+    if(missing.length) {
+      $("status").textContent="Forecast file loaded, but these locations are missing: "+missing.join(", ")+".";
+    }
     render();
-  } catch (error) {
-    $("status").textContent =
-      "Could not load forecast.json. Check that the forecast workflow ran successfully and GitHub Pages has published the file. (" +
-      error.message + ")";
-    $("days").innerHTML = "";
-    $("hours").innerHTML = "";
-    $("window").textContent = "Forecast unavailable until the data file loads.";
+  } catch(error) {
+    $("status").textContent="Could not load forecast.json ("+error.message+"). Check that the forecast workflow succeeded and GitHub Pages has published the file.";
+    $("status").className="notice";
+    $("daily-charts").innerHTML="";
+    $("top-days").innerHTML="";
+    $("hourly-list").innerHTML="";
+    $("quality").textContent="Forecast data could not be checked.";
   }
 }
-
-$("location").addEventListener("change", render);
-$("day").addEventListener("change", renderHours);
+$("location").addEventListener("change",()=>{selectedDate=null;render();});
 loadForecast();
 </script>
 </body>
