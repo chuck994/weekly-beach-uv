@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b46">
+  <title>Weekly Beach UV Outlook</title>
+  <style>
+    body { margin: 0; font: 16px/1.5 -apple-system, sans-serif; background: #f2f6fa; color: #183047; }
+    header { background: #102b46; color: white; padding: 26px 20px; }
+    main { max-width: 760px; margin: auto; padding: 18px; }
+    .card { background: white; border-radius: 16px; padding: 18px; margin: 14px 0; box-shadow: 0 2px 10px #18304712; }
+    h1 { font-size: 25px; margin: 0 0 6px; }
+    h2 { font-size: 19px; margin-top: 0; }
+    .muted { color: #647789; font-size: 13px; }
+    .pill { display: inline-block; border-radius: 20px; padding: 4px 10px; background: #e4eef8; font-size: 13px; }
+    .days { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+    .day { border: 1px solid #e1e9f0; border-radius: 12px; padding: 12px; }
+    .bar { height: 9px; border-radius: 8px; background: #e7edf3; overflow: hidden; margin: 9px 0; }
+    .fill { height: 100%; background: #e4a22b; width: 0; }
+    a { color: #145ea8; }
+    @media(min-width:600px) { .days { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Weekly Beach UV Outlook</h1>
+    <div>Isle of Palms · Sullivan's Island · Mount Pleasant, SC</div>
+    <p class="muted" style="color:#c8d8e8">Dashboard preview — live forecast not connected yet</p>
+  </header>
+  <main>
+    <section class="card">
+      <h2>Your weekly report</h2>
+      <p id="status">This is the dashboard shell. Real forecast data will be connected in a later step.</p>
+      <p class="muted">Report week: next Monday–Sunday · Updated when the automated report is published.</p>
+    </section>
+    <section class="card">
+      <h2>Daily UV overview</h2>
+      <div class="days" id="days"></div>
+      <p class="muted">Illustrative placeholders only — these numbers are not real forecasts.</p>
+    </section>
+    <section class="card">
+      <h2>How to read the UV Index</h2>
+      <p>0–2: Low · 3–5: Moderate · 6–7: High · 8–10: Very high · 11+: Extreme</p>
+      <p>UV can still be significant on cloudy days. When UV is 3 or higher, use shade, protective clothing, sunglasses, and broad-spectrum SPF 30+ sunscreen.</p>
+    </section>
+    <section class="card">
+      <h2>Forecast sources</h2>
+      <ul>
+        <li><a href="https://www.epa.gov/sunsafety/uv-index-1" target="_blank" rel="noopener">U.S. EPA UV Index information</a></li>
+        <li><a href="https://forecast.weather.gov/" target="_blank" rel="noopener">National Weather Service forecasts</a></li>
+      </ul>
+      <p class="muted">The completed report will distinguish forecast values from estimates and identify missing data.</p>
+    </section>
+    <p class="muted">Prototype only. Do not use placeholder values to plan sun exposure.</p>
+  </main>
+  <script>
+    const examples = [
+      ["Monday",3],["Tuesday",5],["Wednesday",6],
+      ["Thursday",4],["Friday",7],["Saturday",5],["Sunday",3]
+    ];
+    document.getElementById("days").innerHTML = examples.map(([day,uv]) =>
+      `<div class="day"><strong>${day}</strong><div>Example UV: ${uv}</div><div class="bar"><div class="fill" style="width:${uv/11*100}%"></div></div><span class="pill">Placeholder</span></div>`
+    ).join("");
+  </script>
+</body>
+</html>
