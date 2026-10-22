@@ -35,3 +35,17 @@ jobs:
           git add forecast.json
           git diff --cached --quiet || git commit -m "Update weekly UV forecast"
           git push
+
+      - name: Test iPhone notification
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          if [ -z "$NTFY_TOPIC" ]; then
+            echo "NTFY_TOPIC secret is missing."
+            exit 1
+          fi
+          curl --fail --silent --show-error \
+            -H "Title: Beach UV notification test" \
+            -H "Priority: default" \
+            -d "Success! GitHub Actions can send notifications. Your beach UV alert setup is connected." \
+            "https://ntfy.sh/$NTFY_TOPIC"
