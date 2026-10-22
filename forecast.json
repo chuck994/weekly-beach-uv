@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-21T20:56:30.508088-04:00",
+  "generated_at": "2026-10-21T20:58:29.137724-04:00",
   "timezone": "America/New_York",
   "source": "Open-Meteo Forecast API",
   "source_url": "https://open-meteo.com/",
@@ -7,7 +7,7 @@
     "Isle of Palms": {
       "latitude": 32.78379,
       "longitude": -79.80148,
-      "generationtime_ms": 0.6352663040161133,
+      "generationtime_ms": 2.831578254699707,
       "utc_offset_seconds": -14400,
       "timezone": "America/New_York",
       "timezone_abbreviation": "GMT-4",
@@ -1095,7 +1095,7 @@
     "Sullivan's Island": {
       "latitude": 32.762573,
       "longitude": -79.83892,
-      "generationtime_ms": 0.7420778274536133,
+      "generationtime_ms": 4.442572593688965,
       "utc_offset_seconds": -14400,
       "timezone": "America/New_York",
       "timezone_abbreviation": "GMT-4",
@@ -2183,7 +2183,7 @@
     "Mount Pleasant": {
       "latitude": 32.84164,
       "longitude": -79.82063,
-      "generationtime_ms": 0.2617835998535156,
+      "generationtime_ms": 1.6819238662719727,
       "utc_offset_seconds": -14400,
       "timezone": "America/New_York",
       "timezone_abbreviation": "GMT-4",
